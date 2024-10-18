@@ -162,6 +162,7 @@ public class ListTester {
 		testSingleElementList(emptyList_addA_A, "emptyList_addA_A", LIST_A, STRING_A); //Brayden Xenos addition
 		testSingleElementList(emptyList_add0A_A, "emptyList_add0A_A", LIST_A, STRING_A); //Brayden Xenos addition
 		//1-element to empty list
+		testEmptyList(A_RemoveA_empty, "A_RemoveA_empty"); //Brayden Xenos addition
 		testEmptyList(A_IterRemoveA_empty, "A_IterRemoveA_empty"); //Brayden Xenos addition AL
 		//1-element to 2-element
 		testTwoElementList(A_addToFrontB_BA, "A_addToFrontB_BA", LIST_BA, STRING_BA); 
@@ -176,8 +177,11 @@ public class ListTester {
 		testSingleElementList(AB_IterRemoveB_A, "AB_IterRemoveB_A", LIST_A, STRING_A); //Brayden Xenos addition AL
 		//2-element to 3-element
 		testThreeElementList(C_addToRearAB_ABC, "C_addToRearAB_ABC", LIST_ABC, STRING_ABC); //Brayden Xenos addition
+		testThreeElementList(A_addToFrontBC_ABC, "A_addToFrontBC_ABC", LIST_ABC, STRING_ABC); //Brayden Xenos addition
 		//2-element to changed 2-element via set()
 		//3-element to 2-element
+		testTwoElementList(ABC_removeA_BC, "ABC_removeA_BC", LIST_BC, STRING_BC); //Brayden Xenos addition
+		testTwoElementList(ABC_removeB_AC, "ABC_removeB_AC", LIST_AC, STRING_AC); //Brayden Xenos addition
 		testTwoElementList(ABC_removeC_AB, "ABC_removeC_AB", LIST_AB, STRING_AB); //Brayden Xenos addition
 		testTwoElementList(ABC_remove0_BC, "ABC_remove0_BC", LIST_BC, STRING_BC); //Brayden Xenos addition
 		testTwoElementList(ABC_remove1_AC, "ABC_remove1_AC", LIST_AC, STRING_AC); //Brayden Xenos addition
@@ -237,6 +241,16 @@ public class ListTester {
 	//  just make sure each scenario building method has a corresponding Scenario 
 	//  assignment statement as in these examples. 
 	private Scenario<Integer> newList = () -> newList();
+
+	/** Scenario: [A] -> A_RemoveA_empty(A) -> [] 
+	 * @return [] after A_RemoveA_empty(A)
+	 */
+	private IndexedUnsortedList<Integer> A_RemoveA_empty() {
+		IndexedUnsortedList<Integer> list = emptyList_addToFrontA_A();
+		list.remove(ELEMENT_A);
+		return list;
+	}
+	private Scenario<Integer> A_RemoveA_empty = () -> A_RemoveA_empty();
 
 	/** Scenario: empty list -> addToFront(A) -> [A] 
 	 * @return [A] after addToFront(A)
@@ -347,6 +361,36 @@ public class ListTester {
 		return list;
 	}
 	private Scenario<Integer> C_addToRearAB_ABC = () -> C_addToRearAB_ABC();
+
+	/** Scenario: [B,C] -> addToFront(A) -> [A,B,C] 
+	 * @return [A,B,C] after addToFront(A)
+	 */
+	private IndexedUnsortedList<Integer> A_addToFrontBC_ABC() {
+		IndexedUnsortedList<Integer> list = ABC_removeA_BC(); 
+		list.addToFront(ELEMENT_A);
+		return list;
+	}
+	private Scenario<Integer> A_addToFrontBC_ABC = () -> A_addToFrontBC_ABC();
+
+	/** Scenario: [ABC] ->remove(A) -> [B,C] 
+	 * @return [B,C] after remove(A)
+	 */
+	private IndexedUnsortedList<Integer> ABC_removeA_BC() {
+		IndexedUnsortedList<Integer> list = C_addToRearAB_ABC(); 
+		list.remove(ELEMENT_A);
+		return list;
+	}
+	private Scenario<Integer> ABC_removeA_BC = () -> ABC_removeA_BC();
+
+	/** Scenario: [ABC] ->remove(B) -> [A,C] 
+	 * @return [A,C] after remove(B)
+	 */
+	private IndexedUnsortedList<Integer> ABC_removeB_AC() {
+		IndexedUnsortedList<Integer> list = C_addToRearAB_ABC(); 
+		list.remove(ELEMENT_B);
+		return list;
+	}
+	private Scenario<Integer> ABC_removeB_AC = () -> ABC_removeB_AC();
 
 	/** Scenario: [ABC] ->remove(C) -> [A,B] 
 	 * @return [A,B] after remove(C)

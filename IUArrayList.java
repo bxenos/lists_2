@@ -181,6 +181,7 @@ public class IUArrayList<T> implements IndexedUnsortedList<T> {
         //check if element is valid
         checkBounds(index);
         array[index] = element;
+        modCount++;
     }
 
     @Override
