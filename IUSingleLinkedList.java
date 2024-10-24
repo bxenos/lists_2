@@ -28,20 +28,33 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 
 	@Override
 	public void addToFront(T element) {
-		// TODO 
-		
+		Node<T> newNode = new Node<T>(element);
+		newNode.setNextNode(head);
+		head = newNode;
+		if (tail == null) { //or size == 0 or isEmpty()
+			tail = newNode;
+		} 
+		size++;
+		modCount++;
 	}
 
 	@Override
 	public void addToRear(T element) {
-		// TODO 
+		Node<T> newNode = new Node<T>(element);
+		if (!isEmpty()) { //head != null, tail != null, size != 0 ALL OF THESE WORK
+		tail.setNextNode(newNode);
+		} else {
+			head = newNode;
+		}
+		tail = newNode;
+		size++;
+		modCount++;
 		
 	}
 
 	@Override
 	public void add(T element) {
-		// TODO 
-		
+		addToRear(element);
 	}
 
 	@Override
@@ -51,9 +64,25 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 	}
 
 	@Override
-	public void add(int index, T element) {
-		// TODO 
-		
+	public void add(int index, T element) {//whenever adding, you are looking first for the node before where you are inserting the element.
+		if (index < 0 || index > size) {
+			throw new IndexOutOfBoundsException();
+		}
+		if (index == 0) {
+			addToFront(element);
+		} else if (index == size) {
+			addToRear(element);
+		} else {
+		Node<T> currentNode = head;
+		for (int i = 0; i < index - 1; i++) {
+			currentNode = currentNode.getNextNode();
+		}
+		Node<T> newNode = new Node<T>(element);
+		newNode.setNextNode(currentNode.getNextNode());
+		currentNode.setNextNode(newNode);
+		size++;
+		modCount++;
+		}
 	}
 
 	@Override
@@ -70,42 +99,39 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 
 	@Override
 	public T remove(T element) {
+
 		if (isEmpty()) {
 			throw new NoSuchElementException();
 		}
-		
-		boolean found = false;
-		Node<T> previous = null;
-		Node<T> current = head;
-		
-		while (current != null && !found) {
-			if (element.equals(current.getElement())) {
-				found = true;
-			} else {
-				previous = current;
-				// current = current.getNext();
+
+		T retVal;
+		//checking if the element being removed is the head
+		if (head.getElement().equals(element)) {
+			retVal = head.getElement();
+			head = head.getNextNode();
+			if (head == null) {
+				tail = null;
 			}
 		}
-		
-		if (!found) {
+		else { //going ahead with the other cases
+		Node<T> curNode = head;
+		while (curNode != tail && !curNode.getNextNode().getElement().equals(element)) {
+			curNode = curNode.getNextNode();
+		}
+		if (curNode == tail) { //or curNode.getNextNoded() == null
 			throw new NoSuchElementException();
 		}
-		
-		if (size() == 1) { //only node
-			head = tail = null;
-		} else if (current == head) { //first node
-			// head = current.getNext();
-		} else if (current == tail) { //last node
-			tail = previous;
-			// tail.setNext(null);
-		} else { //somewhere in the middle
-			// previous.setNext(current.getNext());
+		retVal = curNode.getNextNode().getElement();
+		if(curNode.getNextNode() == tail) {
+			tail = curNode;
 		}
+		curNode.setNextNode(curNode.getNextNode().getNextNode());
 		
 		size--;
 		modCount++;
-		
-		return current.getElement();
+	}
+
+		return retVal;
 	}
 
 	@Override
