@@ -54,10 +54,10 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 	@Override
 	public void addToRear(T element) {
 		Node<T> newNode = new Node<T>(element);
-		if (head != null) { //head != null, tail != null, size != 0 ALL OF THESE WORK
-			tail.setNextNode(newNode);
-		} else {
+		if (head == null) { 
 			head = newNode;
+		} else {
+			tail.setNextNode(newNode);
 		}
 		tail = newNode;
 		size++;
@@ -363,35 +363,32 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 		
 		@Override
 		public void remove() {
-			//checking if both modCounts are equal
 			if (iterModCount != modCount) {
 				throw new ConcurrentModificationException();
 			}
 
-			//checking if canRemove is true
 			if (!canRemove) {
 				throw new IllegalStateException();
 			}
+			
 			canRemove = false;
-
 			Node<T> prevPrevNode = null;
-			if (head.getNextNode() != iterNextNode) {
+			if (head.getNextNode() == iterNextNode) {
+				head = iterNextNode;
+			} else {
 				prevPrevNode = head;
 				while (prevPrevNode.getNextNode().getNextNode() != iterNextNode) {
 					prevPrevNode = prevPrevNode.getNextNode();
 				}
 				prevPrevNode.setNextNode(iterNextNode);
-			} else {
-				head = head.getNextNode();
 			}
-
 			if (iterNextNode == null) {
-				tail = null;
+				tail = prevPrevNode;
 			}
 
+			size--;
 			modCount++;
 			iterModCount++;
-			size--;
 		}
 	}
 }
