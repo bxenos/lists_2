@@ -171,6 +171,7 @@ public class ListTester {
 		testTwoElementList(A_add0B_BA, "A_add0B_BA", LIST_BA, STRING_BA); //Brayden Xenos addition
 		testTwoElementList(A_add1B_AB, "A_add1B_AB", LIST_AB, STRING_AB); //Brayden Xenos addition
 		//1-element to changed 1-element via set()
+		testSingleElementList(A_set0A_A, "A_set0A_A", LIST_A, STRING_A);
 		testSingleElementList(A_set0B_B, "A_set0B_B", LIST_B, STRING_B);
 		//2-element to 1-element
 		testSingleElementList(AB_IterRemoveA_B, "AB_IterRemoveA_B", LIST_B, STRING_B); //Brayden Xenos addition AL
@@ -527,6 +528,17 @@ public class ListTester {
 		return list;
 	}
 	private Scenario<Integer> A_set0B_B = () -> A_set0B_B();
+
+	/** Scenario: [A] -> A_set0A_A -> [A] 
+	 * @return [B] after A_set0A_A
+	 */
+	private IndexedUnsortedList<Integer> A_set0A_A() {
+		IndexedUnsortedList<Integer> list = emptyList_addToFrontA_A(); 
+		list.set(0, ELEMENT_A);
+
+		return list;
+	}
+	private Scenario<Integer> A_set0A_A = () -> A_set0A_A();
 
 	/////////////////////////////////
 	//XXX Tests for 0-element list
