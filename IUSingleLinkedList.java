@@ -28,7 +28,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 	}
 
 	/**
-	 * checks if the list is empty. This ethod is to avoid code duplication
+	 * checks if the list is empty. This method is to avoid code duplication
 	 * 
 	 * @author Brayden Xenos
 	 * @throws NoSuchElementException
@@ -47,6 +47,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 		if (isEmpty()) { //or size == 0 or isEmpty()
 			tail = newNode;
 		} 
+
 		size++;
 		modCount++;
 	}
@@ -59,6 +60,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 		} else {
 			tail.setNextNode(newNode);
 		}
+
 		tail = newNode;
 		size++;
 		modCount++;
@@ -88,6 +90,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 		if(newNode.getNextNode() == null) {
 			tail = newNode;
 		}
+
 		size++;
 		modCount++;
 
@@ -98,6 +101,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 		if (index < 0 || index > size) {
 			throw new IndexOutOfBoundsException();
 		}
+
 		if (index == 0) {
 			addToFront(element);
 		} else if (index == size) {
@@ -110,6 +114,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 		Node<T> newNode = new Node<T>(element);
 		newNode.setNextNode(currentNode.getNextNode());
 		currentNode.setNextNode(newNode);
+
 		size++;
 		modCount++;
 		}
@@ -120,7 +125,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 		checkIfEmpty();
 		T retVal;
 		
-		if (size == 1) {
+		if (size == 1) { //check if there is only one element in the list
 			retVal = head.getElement();
 			head = tail = null;
 		}
@@ -129,6 +134,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 			retVal = curNode.getElement();
 			head = curNode.getNextNode();
 		}
+
 		size--;
 		modCount++;
 		return retVal;
@@ -150,6 +156,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 			curNode.setNextNode(null);
 			tail = curNode;
 		}
+
 		size--;
 		modCount++;
 		return tempNode.getElement();
@@ -215,6 +222,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 			if (currNode.getNextNode() == null) {
 				tail = tempNode;
 			}
+
 			size--;
 			modCount++;
 		}
@@ -254,6 +262,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 			}
 			retVal = currNode.getElement();
 		}
+
 		return retVal;
 	}
 
@@ -269,6 +278,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
         if (currentNode == null) {  //didn't find it
             currentIndex = -1;  //best praacice: never have more than 1 return statement
         }
+
 		return currentIndex;
 	}
 
@@ -347,6 +357,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 			if (iterModCount != modCount) {
 				throw new ConcurrentModificationException();
 			}
+
 			return iterNextNode != null;
 		}
 
@@ -358,6 +369,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 			T retVal = iterNextNode.getElement();
 			iterNextNode = iterNextNode.getNextNode();
 			canRemove = true;
+
 			return retVal;
 		}
 		
@@ -370,7 +382,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 			if (!canRemove) {
 				throw new IllegalStateException();
 			}
-			
+
 			canRemove = false;
 			Node<T> prevPrevNode = null;
 			if (head.getNextNode() == iterNextNode) {

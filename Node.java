@@ -28,14 +28,14 @@ public class Node<T> {
     
     /**
      * Getter for nextNode
-     * @return
+     * @return the next node.
      */
     public Node<T> getNextNode() {
         return nextNode;
     }
     
     /**
-     * Setter for next node
+     * Setter for nextNode
      * @param nextNode
      */
     public void setNextNode(Node<T> nextNode) {
@@ -44,7 +44,7 @@ public class Node<T> {
     
     /**
      * Getter for element
-     * @return
+     * @return the nodes element
      */
     public T getElement() {
         return element;
