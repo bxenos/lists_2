@@ -232,7 +232,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 
 	@Override
 	public void set(int index, T element) {
-		//checking if the element already exists.
+		//checking if the index is valid.
 		if (index >= size || index < 0) {
 			throw new IndexOutOfBoundsException();
 		}

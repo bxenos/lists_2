@@ -5,6 +5,7 @@
  */
 public class Node<T> {
     private Node <T> nextNode;
+    private Node <T> previousNode;
     private T element;
     
     /**
@@ -14,17 +15,20 @@ public class Node<T> {
     public Node(T element) {
         this.element = element;
         this.nextNode = null;
+        this.previousNode = null;
     }
     
-    /**
-     * Initialize Node with given element and next Node.
-     * @param element
-     * @param nextNode
-     */
-    public Node(T element, Node<T> nextNode) {
-        this.element = element;
-        this.nextNode = nextNode;
-    }
+    // /**
+    //  * Initialize Node with given element and next Node.
+    //  * @param element
+    //  * @param nextNode
+    //  * @param previousNode
+    //  */
+    // public Node(T element, Node<T> nextNode, Node<T> previousNode) {
+    //     this.element = element;
+    //     this.nextNode = nextNode;
+    //     this.previousNode = previousNode;
+    // }
     
     /**
      * Getter for nextNode
@@ -57,5 +61,22 @@ public class Node<T> {
     public void setElement(T element) {
         this.element = element;
     }
+
+        /**
+     * Getter for previousNode
+     * @return the previous node.
+     */
+    public Node<T> getPreviousNode() {
+        return previousNode;
+    }
+    
+    /**
+     * Setter for previousNode
+     * @param previousNode
+     */
+    public void setPreviousNode(Node<T> previousNode) {
+        this.previousNode = previousNode;
+    }
+    
     
 }
