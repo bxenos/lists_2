@@ -43,7 +43,7 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T>{
         } else {   //hist has element values
         Node<T> targetNode = tail;
         targetNode.setNextNode(newNode);
-        newNode.setNextNode(targetNode);
+        newNode.setPreviousNode(targetNode);
         tail = newNode;
         }
 
@@ -81,8 +81,30 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T>{
 
     @Override
     public void add(int index, T element) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'add'");
+
+        if (index < 0 || index > size) { //checking if index is in bounds
+            throw new IndexOutOfBoundsException();
+        }
+        
+        if (index == 0) {  //checking if the index is at the beginning
+            addToFront(element);
+        } else if (index == size) {  //checking if the index is at the tail.
+            addToRear(element);
+        } else {  //else, the list isnt empty or the index isn't at the tail and goes thorugh the regular process.
+        Node<T> currentNode = head;
+        for (int i = 0; i < index - 1; i++) {
+			currentNode = currentNode.getNextNode();
+		}
+		Node<T> newNode = new Node<T>(element);
+        Node<T> afterNode = currentNode.getNextNode();
+		newNode.setNextNode(afterNode);
+		currentNode.setNextNode(newNode);
+        newNode.setPreviousNode(currentNode);
+        afterNode.setPreviousNode(newNode);
+        }
+
+        size++;
+        modCount++;
     }
 
     @Override
@@ -170,8 +192,22 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T>{
 
     @Override
     public T get(int index) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'get'");
+        //Checking if the index exists
+		if (index < 0 ||index >= size) {
+			throw new IndexOutOfBoundsException();
+		}
+		T retVal;
+		if (index == 0) {
+			retVal = head.getElement();
+		} else {
+			Node<T> currNode = head;
+			for (int i = 0; i < index; i++) {
+				currNode = currNode.getNextNode();
+			}
+			retVal = currNode.getElement();
+		}
+
+		return retVal;
     }
 
     @Override
