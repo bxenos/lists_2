@@ -1,5 +1,6 @@
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
@@ -34,6 +35,9 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T>{
 
         size++;
         modCount++;
+        //alt method vv
+        // ListIterator<T> lit = listIterator();
+        // lit.add(element);
     }
 
     @Override
@@ -50,6 +54,8 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T>{
 
         size++;
         modCount++;
+        // ListIterator<T> lit = listIterator(size);
+        // lit.add(element);
     }
 
     @Override
@@ -157,6 +163,20 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T>{
 
     @Override
     public T remove(T element) {
+    //     ListIterator<T> lit = listIterator();
+    //     boolean found = false;
+    //     T retVal = null;
+    //     while (lit.hasNext() && !found) {
+    //         retVal = lit.next();
+    //         if (retVal.equals(element)) {
+    //             found = true;
+    //         }
+    //     }
+    //     if (!found) {
+    //         throw new NoSuchElementException();
+    //     }
+    //     lit.remove();
+    //     return retVal;
         Node<T> targetNode = head;
         while (targetNode != null && !targetNode.getElement().equals(element)) {
             targetNode = targetNode.getNextNode();
@@ -278,8 +298,10 @@ public T remove(int index) {
 
 	@Override
 	public T first() {
-		checkIfEmpty();
-		return head.getElement();
+		// checkIfEmpty();
+		// return head.getElement();
+        ListIterator<T> lit = listIterator();
+        return lit.next();
 	}
 
 	@Override
@@ -320,17 +342,22 @@ public T remove(int index) {
 
     @Override
     public Iterator<T> iterator() {
+        /**
+         * this one is funky becasue when it just calls the standard iterator, it will
+         * ONLY use the ones in the standard iterator class(event though its ListIterator).
+         * This is becasue ListIterator implements Iterator, which makes this possible.
+         */
         return new DLLIterator();
     }
 
     @Override
     public ListIterator<T> listIterator() {
-        throw new UnsupportedOperationException();
+        return new DLLIterator();
     }
 
     @Override
     public ListIterator<T> listIterator(int startingIndex) {
-        throw new UnsupportedOperationException();
+        return new DLLIterator(startingIndex);
     }
     
     /**
@@ -339,19 +366,39 @@ public T remove(int index) {
      * @author Brayden Xenos
      */
     private class DLLIterator implements ListIterator<T> {
-        private Node<T> iterNextNode;
+        private Node<T> nextNode;
+        private int nextIndex;
 		private int iterModCount;
-		private boolean canRemove;
+		private Node<T> lastReturnedNode;
 
         /**
          * DLLIterator constructor
+         * initialize iterator before first element
          * 
          * @author Brayden Xenos
          */
         public DLLIterator() {
-            iterNextNode = head;
+            this(0);
+        }
+
+        /**
+         * DLLIterator constructor
+         * initialize iterator before first element
+         * 
+         * @author Brayden Xenos
+         */
+        public DLLIterator(int startingIndex) {
+            nextNode = head;
+            if (startingIndex < 0 || startingIndex > size) {
+                throw new IndexOutOfBoundsException();
+            }
+            //should really pick which end to start from
+            for (int i = 0; i < startingIndex; i++) { //only efficent enough in the front half
+                nextNode = nextNode.getNextNode();
+            }
+            nextIndex = startingIndex;
 			iterModCount = modCount;
-			canRemove = false;
+			lastReturnedNode = null;
         }
 
         @Override
@@ -360,7 +407,7 @@ public T remove(int index) {
 				throw new ConcurrentModificationException();
 			}
 
-			return iterNextNode != null;
+			return nextNode != null;
         }
 
         @Override
@@ -368,23 +415,55 @@ public T remove(int index) {
             if (!hasNext()) {
 				throw new NoSuchElementException();
 			}
-			T retVal = iterNextNode.getElement();
-			iterNextNode = iterNextNode.getNextNode();
-			canRemove = true;
-
+			T retVal = nextNode.getElement();
+            lastReturnedNode = nextNode;
+			nextNode = nextNode.getNextNode();
+            nextIndex++;
 			return retVal;
         }
 
         @Override
-		public void remove() {
-            // TODO Auto-generated method stub
-            throw new UnsupportedOperationException("Unimplemented method 'remove'");
+		public void remove() { //this is not done and needsto be fixed
+            if (iterModCount != modCount) { //iterator existential crisis
+                throw new ConcurrentModificationException();
+            }
+            if (lastReturnedNode == null) { //is it possible to remove?
+                throw new IllegalStateException();
+            }
+
+            //check if lastReturnedNode is the head
+            if (lastReturnedNode != head) { //or previousNode == null
+                lastReturnedNode.getPreviousNode().setNextNode(lastReturnedNode.getNextNode());
+            } else {
+                head = lastReturnedNode.getNextNode(); //need a new head
+            }
+
+            //check if lastReturnedNode is the tail
+            if (lastReturnedNode != tail) { //or nextNode == null
+                lastReturnedNode.getNextNode().setPreviousNode(lastReturnedNode.getPreviousNode());
+            } else {
+                tail = lastReturnedNode.getPreviousNode(); //need a new tail
+            }
+
+            lastReturnedNode = null;
+            
+            if (lastReturnedNode == nextNode) { //last move was next//last move was previous
+                nextIndex--;  //there are fewer nodes/elements to my left than there used to be
+            } else { //last move was next
+                nextNode = nextNode.getNextNode(); //that node isnt in the list anymore
+            }
+            
+            size--;
+            iterModCount++;
+            modCount++;
         }
 
         @Override
         public boolean hasPrevious() {
-            // TODO Auto-generated method stub
-            throw new UnsupportedOperationException("Unimplemented method 'hasPrevious'");
+            if (iterModCount != modCount) {
+                throw new ConcurrentModificationException();
+            }
+            return nextNode != head;
         }
 
         @Override
@@ -395,14 +474,12 @@ public T remove(int index) {
 
         @Override
         public int nextIndex() {
-            // TODO Auto-generated method stub
-            throw new UnsupportedOperationException("Unimplemented method 'nextIndex'");
+            return nextIndex;
         }
 
         @Override
         public int previousIndex() {
-            // TODO Auto-generated method stub
-            throw new UnsupportedOperationException("Unimplemented method 'previousIndex'");
+            return nextIndex - 1;
         }
 
         @Override
