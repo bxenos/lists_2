@@ -11,6 +11,16 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T>{
     private int modCount;
 
     /**
+     * Constructor
+     * initialize a new empty list
+     */
+    public IUDoubleLinkedList() {
+        head = tail = null;
+        size = 0;
+        modCount = 0;
+    }
+
+    /**
 	 * checks if the list is empty. This method is to avoid code duplication
 	 * 
 	 * @author Brayden Xenos
@@ -72,6 +82,7 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T>{
         if (targetNode == null) {
             throw new NoSuchElementException();
         }
+        
         Node<T> newNode = new Node<T>(element);
         newNode.setNextNode(targetNode.getNextNode()); //connect newNode first
         newNode.setPreviousNode(targetNode); 
@@ -463,13 +474,27 @@ public T remove(int index) {
             if (iterModCount != modCount) {
                 throw new ConcurrentModificationException();
             }
+
+            if (nextNode == null) {
+                return false;
+            }
+
             return nextNode != head;
         }
 
         @Override
         public T previous() {
-            // TODO Auto-generated method stub
-            throw new UnsupportedOperationException("Unimplemented method 'previous'");
+            if (!hasPrevious()) {
+                throw new NoSuchElementException();
+            }
+
+            T retVal = nextNode.getPreviousNode().getElement();
+            lastReturnedNode = nextNode.getPreviousNode();
+            nextNode = nextNode.getPreviousNode();
+            nextIndex--;
+
+            return retVal;
+
         }
 
         @Override
@@ -484,8 +509,19 @@ public T remove(int index) {
 
         @Override
         public void set(T e) {
-            // TODO Auto-generated method stub
-            throw new UnsupportedOperationException("Unimplemented method 'set'");
+            if (iterModCount != modCount) {
+                throw new ConcurrentModificationException();
+            }
+
+            if (lastReturnedNode == null) { //is it possible to remove?
+                throw new IllegalStateException();
+            }
+
+            //set last returned node to the element inputed
+            lastReturnedNode.setElement(e);
+
+            iterModCount++;
+            modCount++;
         }
 
         @Override
