@@ -82,7 +82,7 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T>{
         if (targetNode == null) {
             throw new NoSuchElementException();
         }
-        
+
         Node<T> newNode = new Node<T>(element);
         newNode.setNextNode(targetNode.getNextNode()); //connect newNode first
         newNode.setPreviousNode(targetNode); 
@@ -456,14 +456,15 @@ public T remove(int index) {
                 tail = lastReturnedNode.getPreviousNode(); //need a new tail
             }
 
-            lastReturnedNode = null;
+            // lastReturnedNode = null;
             
             if (lastReturnedNode == nextNode) { //last move was next//last move was previous
-                nextIndex--;  //there are fewer nodes/elements to my left than there used to be
+                nextNode = lastReturnedNode.getNextNode(); //that node isnt in the list anymore
             } else { //last move was next
-                nextNode = nextNode.getNextNode(); //that node isnt in the list anymore
+                nextIndex--;  //there are fewer nodes/elements to my left than there used to be
             }
             
+            lastReturnedNode = null;
             size--;
             iterModCount++;
             modCount++;
@@ -475,10 +476,6 @@ public T remove(int index) {
                 throw new ConcurrentModificationException();
             }
 
-            if (nextNode == null) {
-                return false;
-            }
-
             return nextNode != head;
         }
 
@@ -488,12 +485,16 @@ public T remove(int index) {
                 throw new NoSuchElementException();
             }
 
-            T retVal = nextNode.getPreviousNode().getElement();
-            lastReturnedNode = nextNode.getPreviousNode();
-            nextNode = nextNode.getPreviousNode();
+            if (nextNode == null) { //if at the end
+                nextNode = tail;
+            } else { //if in the middle
+                nextNode = nextNode.getPreviousNode();
+            }
+
+            lastReturnedNode = nextNode;
             nextIndex--;
 
-            return retVal;
+            return nextNode.getElement();
 
         }
 
@@ -526,8 +527,35 @@ public T remove(int index) {
 
         @Override
         public void add(T e) {
-            // TODO Auto-generated method stub
-            throw new UnsupportedOperationException("Unimplemented method 'add'");
+            if (iterModCount != modCount) {
+                throw new ConcurrentModificationException();
+            }
+
+            if (head == null) { //list is empty
+                head = tail = new Node<T>(e);
+
+            } else if (nextNode == head) { //add to the front
+                addToFront(e);
+
+            } else if (nextNode == null) { //add to the end
+                addToRear(e);
+
+            } else { //add to the middle
+                Node<T> newNode = new Node<T>(e);
+                Node<T> prevNode = nextNode.getPreviousNode();
+
+                //changing pointers
+                prevNode.setNextNode(newNode);
+                newNode.setNextNode(nextNode);
+                nextNode.setPreviousNode(newNode);
+                newNode.setPreviousNode(prevNode);  
+            }
+
+            size++;
+            nextIndex++;
+            iterModCount++;
+            modCount++;
+
         }
     }
 }
