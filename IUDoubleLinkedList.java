@@ -117,18 +117,20 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T>{
             newNode.setPreviousNode(tail);
             tail.setNextNode(newNode);
             tail = newNode;
-        } else {   // ist isnt empty or index isnt = size
+        } else {   // list isnt empty or index isnt = size or 0
             Node<T> currentNode = head;
             for (int i = 0; i < index - 1; i++) {
                 currentNode = currentNode.getNextNode();
             }
             Node<T> afterNode = currentNode.getNextNode();
             
-            //setting pointers for newNode
+            // setting pointers for newNode
             currentNode.setNextNode(newNode);
             newNode.setPreviousNode(currentNode);
-            newNode.setNextNode(afterNode);
-            afterNode.setPreviousNode(newNode);
+            if (afterNode != null) {
+                newNode.setNextNode(afterNode);
+                afterNode.setPreviousNode(newNode);
+            } 
         }
     
         size++;
@@ -243,7 +245,9 @@ public T remove(int index) {
         Node<T> nextNode = targetNode.getNextNode();
         
         previousNode.setNextNode(nextNode);
-        nextNode.setPreviousNode(previousNode);
+        if (nextNode != null) {
+            nextNode.setPreviousNode(previousNode);
+        }
     }
 
     size--;
@@ -265,8 +269,12 @@ public T remove(int index) {
 
         for (int i = 0; i < index; i++) {
             targetNode = targetNode.getNextNode(); // gets the node that is 1 prior
+            if (targetNode == null) {
+                throw new IndexOutOfBoundsException();
+            }
         }
         targetNode.setElement(element);
+        
 
         modCount++;
     }
@@ -284,6 +292,9 @@ public T remove(int index) {
 			Node<T> currNode = head;
 			for (int i = 0; i < index; i++) {
 				currNode = currNode.getNextNode();
+                if (currNode == null) {
+                    throw new IndexOutOfBoundsException();
+                }   
 			}
 			retVal = currNode.getElement();
 		}
@@ -404,8 +415,13 @@ public T remove(int index) {
                 throw new IndexOutOfBoundsException();
             }
             //should really pick which end to start from
-            for (int i = 0; i < startingIndex; i++) { //only efficent enough in the front half
-                nextNode = nextNode.getNextNode();
+            if (startingIndex == size) {
+                nextNode = null; // If startingIndex is equal to size, nextNode should be null
+            } else {
+                nextNode = head;
+                for (int i = 0; i < startingIndex; i++) {
+                    nextNode = nextNode.getNextNode();
+                }
             }
             nextIndex = startingIndex;
 			iterModCount = modCount;
@@ -539,6 +555,9 @@ public T remove(int index) {
 
             if (head == null) { //list is empty
                 head = tail = new Node<T>(e);
+                
+                modCount++;
+                size++;
 
             } else if (nextNode == head) { //add to the front
                 addToFront(e);
@@ -550,17 +569,21 @@ public T remove(int index) {
                 Node<T> newNode = new Node<T>(e);
                 Node<T> prevNode = nextNode.getPreviousNode();
 
-                //changing pointers
-                prevNode.setNextNode(newNode);
-                newNode.setNextNode(nextNode);
-                nextNode.setPreviousNode(newNode);
-                newNode.setPreviousNode(prevNode);  
+                if (prevNode != null) {
+                    // changing pointers
+                    prevNode.setNextNode(newNode);
+                    newNode.setNextNode(nextNode);
+                    nextNode.setPreviousNode(newNode);
+                    newNode.setPreviousNode(prevNode);
+                } else {
+                    throw new IndexOutOfBoundsException();
+                }
+                modCount++;
+                size++;
             }
 
-            size++;
             nextIndex++;
             iterModCount++;
-            modCount++;
 
         }
     }

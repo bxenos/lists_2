@@ -169,6 +169,7 @@ public class ListTester {
 		testSingleElementList(emptyList_addToRearA_A, "emptyList_addToRearA_A", LIST_A, STRING_A); //Brayden Xenos addition
 		testSingleElementList(emptyList_addA_A, "emptyList_addA_A", LIST_A, STRING_A); //Brayden Xenos addition
 		testSingleElementList(emptyList_add0A_A, "emptyList_add0A_A", LIST_A, STRING_A); //Brayden Xenos addition
+		testSingleElementList(emptyList_iterAddA, "emptyList_iterAddA", LIST_A, STRING_A); //Brayden Xenos addition DLL
 		//1-element to empty list
 		testEmptyList(A_RemoveA_empty, "A_RemoveA_empty"); //Brayden Xenos addition
 		testEmptyList(A_Remove0_empty, "0_RemoveA_empty"); //Brayden Xenos addition SLL
@@ -179,6 +180,7 @@ public class ListTester {
 		testTwoElementList(A_addAfterBA_AB, "A_addAfterBA_AB", LIST_AB, STRING_AB); //Brayden Xenos addition
 		testTwoElementList(A_add0B_BA, "A_add0B_BA", LIST_BA, STRING_BA); //Brayden Xenos addition
 		testTwoElementList(A_add1B_AB, "A_add1B_AB", LIST_AB, STRING_AB); //Brayden Xenos addition
+		testTwoElementList(A_iterNewAddB_BA, "A_iterNewAddB_BA", LIST_BA, STRING_BA); //Brayden Xenos addition DLL
 		//1-element to changed 1-element via set()
 		testSingleElementList(A_set0A_A, "A_set0A_A", LIST_A, STRING_A); //Brayden Xenos addition SLL
 		testSingleElementList(A_set0B_B, "A_set0B_B", LIST_B, STRING_B);
@@ -565,7 +567,7 @@ public class ListTester {
 	 */
 	private IndexedUnsortedList<Integer> A_IterRemoveA_empty() {
 		IndexedUnsortedList<Integer> list = emptyList_addToFrontA_A(); 
-		Iterator<Integer> it = list.iterator();
+		ListIterator<Integer> it = list.listIterator();
 		it.next();
 		it.remove();
 		return list;
@@ -640,6 +642,33 @@ public class ListTester {
 		return list;
 	}
 	private Scenario<Integer> ABC_IterRemoveC_AB = () -> ABC_IterRemoveC_AB();
+
+	/********************************
+	 *   iterator scenarios (DLL)   *
+	 ********************************/
+	/** Scenario: [] -> iterator add(A) -> [A]
+	 * @return [A] after iterator add(A)
+	 */
+	private IndexedUnsortedList<Integer> emptyList_iterAddA() {
+		IndexedUnsortedList<Integer> list = newList();
+		ListIterator<Integer> it = list.listIterator();
+		it.add(ELEMENT_A);
+		return list;
+	}
+	private Scenario<Integer> emptyList_iterAddA = () -> emptyList_iterAddA();
+	
+	/** [A] -> iterator add(B) with new iterator -> [B,A]
+	 *  @return [B,A] after iterator add(B)
+	 */
+	private IndexedUnsortedList<Integer> A_iterNewAddB_BA() {
+		IndexedUnsortedList<Integer> list = emptyList_addToFrontA_A();
+		ListIterator<Integer> it = list.listIterator();
+		it.add(ELEMENT_B);
+		return list;
+	}
+	private Scenario<Integer> A_iterNewAddB_BA = () -> A_iterNewAddB_BA();
+	
+
 
 
 	/////////////////////////////////
