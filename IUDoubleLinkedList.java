@@ -462,20 +462,20 @@ public T remove(int index) {
             if (lastReturnedNode != head) { //or previousNode == null
                 lastReturnedNode.getPreviousNode().setNextNode(lastReturnedNode.getNextNode());
             } else {
-                head = lastReturnedNode.getNextNode(); //need a new head
+                head = head.getNextNode(); //need a new head
             }
 
             //check if lastReturnedNode is the tail
             if (lastReturnedNode != tail) { //or nextNode == null
                 lastReturnedNode.getNextNode().setPreviousNode(lastReturnedNode.getPreviousNode());
             } else {
-                tail = lastReturnedNode.getPreviousNode(); //need a new tail
+                tail = tail.getPreviousNode(); //need a new tail
             }
 
             // lastReturnedNode = null;
             
             if (lastReturnedNode == nextNode) { //last move was next//last move was previous
-                nextNode = lastReturnedNode.getNextNode(); //that node isnt in the list anymore
+                nextNode = nextNode.getNextNode(); //that node isnt in the list anymore
             } else { //last move was next
                 nextIndex--;  //there are fewer nodes/elements to my left than there used to be
             }
@@ -508,6 +508,7 @@ public T remove(int index) {
             }
 
             lastReturnedNode = nextNode;
+
             nextIndex--;
 
             return nextNode.getElement();
@@ -569,15 +570,12 @@ public T remove(int index) {
                 Node<T> newNode = new Node<T>(e);
                 Node<T> prevNode = nextNode.getPreviousNode();
 
-                if (prevNode != null) {
-                    // changing pointers
-                    prevNode.setNextNode(newNode);
-                    newNode.setNextNode(nextNode);
-                    nextNode.setPreviousNode(newNode);
-                    newNode.setPreviousNode(prevNode);
-                } else {
-                    throw new IndexOutOfBoundsException();
-                }
+                // changing pointers
+                prevNode.setNextNode(newNode);
+                newNode.setNextNode(nextNode);
+                nextNode.setPreviousNode(newNode);
+                newNode.setPreviousNode(prevNode);
+
                 modCount++;
                 size++;
             }

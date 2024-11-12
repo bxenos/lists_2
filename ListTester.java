@@ -174,6 +174,7 @@ public class ListTester {
 		testEmptyList(A_RemoveA_empty, "A_RemoveA_empty"); //Brayden Xenos addition
 		testEmptyList(A_Remove0_empty, "0_RemoveA_empty"); //Brayden Xenos addition SLL
 		testEmptyList(A_IterRemoveA_empty, "A_IterRemoveA_empty"); //Brayden Xenos addition AL
+		testEmptyList(A_iterRemovePrevious_emptyList, "A_iterRemovePrevious_emptyList"); //Brayden Xenos addition DLL
 		//1-element to 2-element
 		testTwoElementList(A_addToFrontB_BA, "A_addToFrontB_BA", LIST_BA, STRING_BA); 
 		testTwoElementList(A_addToRearB_AB, "A_addToRearB_AB", LIST_AB, STRING_AB); //Brayden Xenos addition
@@ -181,6 +182,8 @@ public class ListTester {
 		testTwoElementList(A_add0B_BA, "A_add0B_BA", LIST_BA, STRING_BA); //Brayden Xenos addition
 		testTwoElementList(A_add1B_AB, "A_add1B_AB", LIST_AB, STRING_AB); //Brayden Xenos addition
 		testTwoElementList(A_iterNewAddB_BA, "A_iterNewAddB_BA", LIST_BA, STRING_BA); //Brayden Xenos addition DLL
+		testTwoElementList(A_iterAddNextB_AB, "A_iterAddNextB_AB", LIST_AB, STRING_AB); //Brayden Xenos addition DLL
+		testTwoElementList(A_iterAddPreviousB_BA, "A_iterAddPreviousB_BA", LIST_BA, STRING_BA); //Brayden Xenos addition DLL
 		//1-element to changed 1-element via set()
 		testSingleElementList(A_set0A_A, "A_set0A_A", LIST_A, STRING_A); //Brayden Xenos addition SLL
 		testSingleElementList(A_set0B_B, "A_set0B_B", LIST_B, STRING_B);
@@ -189,6 +192,7 @@ public class ListTester {
 		testSingleElementList(AB_IterRemoveB_A, "AB_IterRemoveB_A", LIST_A, STRING_A); //Brayden Xenos addition AL
 		testSingleElementList(AB_Remove0_B, "AB_Remove0_B", LIST_B, STRING_B); //Brayden Xenos addition SLL
 		testSingleElementList(AB_Remove1_A, "AB_Remove1_A", LIST_A, STRING_A); //Brayden Xenos addition SLL
+		testSingleElementList(AB_iterRemovePrevious_B, "AB_iterRemovePrevious_B", LIST_B, STRING_B); //Brayden Xenos addition DLL
 		//2-element to 3-element
 		testThreeElementList(C_addToRearAB_ABC, "C_addToRearAB_ABC", LIST_ABC, STRING_ABC); //Brayden Xenos addition
 		testThreeElementList(A_addToFrontBC_ABC, "A_addToFrontBC_ABC", LIST_ABC, STRING_ABC); //Brayden Xenos addition
@@ -646,6 +650,34 @@ public class ListTester {
 	/********************************
 	 *   iterator scenarios (DLL)   *
 	 ********************************/
+
+	 /**[A] -> iterator remove() after previous() returns A -> []
+	  * @return [] after iterator remove()
+	  */
+	 private IndexedUnsortedList<Integer> A_iterRemovePrevious_emptyList() {
+		 IndexedUnsortedList<Integer> list = emptyList_addToFrontA_A();
+		 ListIterator<Integer> it = list.listIterator();
+		 it.next();
+		 it.previous();
+		 it.remove();
+		 return list;
+	 }
+	 private Scenario<Integer> A_iterRemovePrevious_emptyList = () -> A_iterRemovePrevious_emptyList();
+
+	 /**
+	  * [A,B] -> iterator remove() after previous() returns A -> [B]
+	  * @return [B] after iterator remove()
+	  */
+	 private IndexedUnsortedList<Integer> AB_iterRemovePrevious_B() {
+		 IndexedUnsortedList<Integer> list = A_addToRearB_AB();
+		 ListIterator<Integer> it = list.listIterator();
+		 it.next();
+		 it.previous();
+		 it.remove();
+		 return list;
+	 }
+	 private Scenario<Integer> AB_iterRemovePrevious_B = () -> AB_iterRemovePrevious_B();
+
 	/** Scenario: [] -> iterator add(A) -> [A]
 	 * @return [A] after iterator add(A)
 	 */
@@ -667,6 +699,31 @@ public class ListTester {
 		return list;
 	}
 	private Scenario<Integer> A_iterNewAddB_BA = () -> A_iterNewAddB_BA();
+
+	/** [A] -> iterator add(B) after next() returns A -> [A,B]
+	 * @return [A,B] after iterator add(B)
+	 */
+	private IndexedUnsortedList<Integer> A_iterAddNextB_AB() {
+		IndexedUnsortedList<Integer> list = emptyList_addToFrontA_A();
+		ListIterator<Integer> it = list.listIterator();
+		it.next();
+		it.add(ELEMENT_B);
+		return list;
+	}
+	private Scenario<Integer> A_iterAddNextB_AB = () -> A_iterAddNextB_AB();
+
+	/** [A] -> iterator add(B) after previous() returns A -> [B,A]
+	 * @return [B,A] after iterator add(B)
+	 */
+	private IndexedUnsortedList<Integer> A_iterAddPreviousB_BA() {
+		IndexedUnsortedList<Integer> list = emptyList_addToFrontA_A();
+		ListIterator<Integer> it = list.listIterator();
+		it.next();
+		it.previous();
+		it.add(ELEMENT_B);
+		return list;
+	}
+	private Scenario<Integer> A_iterAddPreviousB_BA = () -> A_iterAddPreviousB_BA();
 	
 
 
