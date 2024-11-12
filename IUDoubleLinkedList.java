@@ -500,11 +500,17 @@ public T remove(int index) {
 
         @Override
         public int nextIndex() {
+            if (iterModCount != modCount) {
+                throw new ConcurrentModificationException();
+            }
             return nextIndex;
         }
 
         @Override
         public int previousIndex() {
+            if (iterModCount != modCount) {
+                throw new ConcurrentModificationException();
+            }
             return nextIndex - 1;
         }
 
